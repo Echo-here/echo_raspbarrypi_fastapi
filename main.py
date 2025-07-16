@@ -1,10 +1,11 @@
 # serial_app.py
 import asyncio
 from typing import Optional
-
 import serial_asyncio
 from fastapi import FastAPI
 import json
+
+from model import Order
 
 app = FastAPI()
 now_serial_data = None
@@ -36,3 +37,7 @@ async def get_serial_data(type: Optional[str] = None):
         return now_serial_data
     except Exception as e:
         return {"error": e}
+
+@app.post("/order")
+async def create_order(order: Order):
+    return order
