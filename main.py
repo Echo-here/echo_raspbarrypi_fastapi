@@ -52,5 +52,6 @@ async def get_serial_data(type: Optional[str] = None):
 @app.post("/order")
 async def create_order(order: Order):
     if order:
+        print(f"[Order Received] {order}")
         return {"status": "success"}
     return {"status": "error"}
