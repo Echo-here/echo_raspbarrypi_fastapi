@@ -6,14 +6,14 @@ from fastapi import FastAPI
 import json
 
 from model import Order
-
+from config import SERIAL_PORT, BAUDRATE
 app = FastAPI()
 now_serial_data = None
 
 async def read_serial():
     global now_serial_data
     reader, _ = await serial_asyncio.open_serial_connection(
-        url="/dev/pts/7", baudrate=9600
+        url=SERIAL_PORT, baudrate=BAUDRATE
     )
     while True:
         try:
