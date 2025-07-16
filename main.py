@@ -19,7 +19,7 @@ async def read_serial():
         try:
             line = await reader.readline()
             decoded = json.loads(line)
-            print(f"[Serial] {decoded["sugar"]}")
+            print(f"[Serial] {decoded}")
             now_serial_data = decoded
         except Exception as e:
             print(f"[Error] {e}")
@@ -40,4 +40,6 @@ async def get_serial_data(type: Optional[str] = None):
 
 @app.post("/order")
 async def create_order(order: Order):
-    return order
+    if order:
+        return {"status": "success"}
+    return {"status": "error"}
