@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 
 class Order(BaseModel):
-    room: str
+    sugar: str
+    coffee: str
+    water: str
+    iced_tea: str
+    green_tea: str
     name: str
-    sugar: float
-    water: float
-    coffee: float
-    icetea: float
-    greentea: float
+    room: str
