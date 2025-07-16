@@ -19,7 +19,7 @@ async def read_serial():
         try:
             line = await reader.readline()
             decoded = json.loads(line)
-            print(f"[Serial] {decoded["sugar"]}")
+            print(f"[Serial] {decoded['sugar']}")
             now_serial_data = decoded
         except Exception as e:
             print(f"[Error] {e}")
