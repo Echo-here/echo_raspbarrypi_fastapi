@@ -7,9 +7,12 @@ import json
 
 from model import Order
 from config import SERIAL_PORT, BAUDRATE
+
 app = FastAPI()
 now_serial_data = None
-serial_task = None  # Task 핸들 저장
+serial_task = None
+order_storage = {}
+order_counter = 0  # 주문 번호 카운터
 
 async def read_serial():
     global now_serial_data
@@ -40,6 +43,7 @@ async def stop_serial_reader():
             await serial_task
         except asyncio.CancelledError:
             print("[Shutdown] Serial reader cancelled cleanly.")
+
 @app.get("/stock")
 async def get_serial_data(type: Optional[str] = None):
     try:
@@ -47,11 +51,34 @@ async def get_serial_data(type: Optional[str] = None):
             return {type: now_serial_data[type]}
         return now_serial_data
     except Exception as e:
-        return {"error": e}
+        return {"error": str(e)}
 
 @app.post("/order")
 async def create_order(order: Order):
+    global order_counter
     if order:
-        print(f"[Order Received] {order}")
-        return {"status": "success"}
+        order_counter += 1
+        order_id = f"{order_counter:04}"  # 4자리 숫자, 예: 0001
+        order_storage[order_id] = order
+        print(f"[Order Received] ID: {order_id}, Data: {order}")
+        return {
+            "status": "success",
+            "order_id": order_id,
+            "order": order
+        }
     return {"status": "error"}
+
+@app.get("/order/{order_id}/status")
+async def get_order_status(order_id: str):
+    order = order_storage.get(order_id)
+    if order:
+        return {
+            "status": "success",
+            "order_id": order_id,
+            "name": order.name,
+            "room": order.room
+        }
+    return {
+        "status": "error",
+        "message": "주문 정보를 찾을 수 없습니다."
+    }
